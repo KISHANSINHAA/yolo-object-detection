@@ -1,4 +1,4 @@
-# YOLOv8 Object Detection Web App
+# Object Detection Web App
 
 This project is a Streamlit-based web application that performs real-time object detection using the YOLOv8 deep learning model.
 

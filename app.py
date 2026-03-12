@@ -3,11 +3,12 @@ from ultralytics import YOLO
 import numpy as np
 from PIL import Image
 import pandas as pd
-import cv2
+import av
+from streamlit_webrtc import webrtc_streamer
 
-st.set_page_config(page_title="YOLO Detection App", layout="wide")
+st.set_page_config(page_title="Object Detection App", layout="wide")
 
-st.title("YOLOv8 Object Detection Web App")
+st.title("Real-Time Computer Vision Object Detection System")
 st.write("Upload an image or use your webcam for real-time detection.")
 
 # Load YOLO model
@@ -71,25 +72,15 @@ if uploaded_file is not None:
 st.divider()
 st.subheader("Live Webcam Detection")
 
-run_webcam = st.checkbox("Start Webcam")
+def video_frame_callback(frame):
+    img = frame.to_ndarray(format="bgr24")
 
-FRAME_WINDOW = st.image([])
+    results = model(img)
+    annotated_frame = results[0].plot()
 
-if run_webcam:
+    return av.VideoFrame.from_ndarray(annotated_frame, format="bgr24")
 
-    cap = cv2.VideoCapture(0)
-
-    while run_webcam:
-        ret, frame = cap.read()
-
-        if not ret:
-            st.write("Webcam not available")
-            break
-
-        results = model(frame)
-
-        annotated_frame = results[0].plot()
-
-        FRAME_WINDOW.image(annotated_frame, channels="BGR")
-
-    cap.release()
+webrtc_streamer(
+    key="object-detection",
+    video_frame_callback=video_frame_callback
+)

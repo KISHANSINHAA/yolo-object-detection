@@ -72,7 +72,7 @@ if uploaded_file is not None:
 st.divider()
 st.subheader("Live Webcam Detection")
 
-def video_frame_callback(frame):
+def video_frame_callback(frame: av.VideoFrame):
     img = frame.to_ndarray(format="bgr24")
 
     results = model(img)
@@ -82,5 +82,8 @@ def video_frame_callback(frame):
 
 webrtc_streamer(
     key="object-detection",
-    video_frame_callback=video_frame_callback
+    mode=WebRtcMode.SENDRECV,
+    video_frame_callback=video_frame_callback,
+    media_stream_constraints={"video": True, "audio": False},
+    async_processing=True
 )

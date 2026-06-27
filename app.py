@@ -1,15 +1,8 @@
-import os
-os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "0"  # Fix: prevent libGL dependency at import time
-
 import streamlit as st
 import numpy as np
 from PIL import Image
 import pandas as pd
 import av
-
-# Fix: import cv2 via headless path before ultralytics loads it
-import cv2  # noqa: must come before ultralytics
-
 from ultralytics import YOLO
 from streamlit_webrtc import webrtc_streamer, WebRtcMode
 
@@ -66,7 +59,7 @@ if uploaded_file is not None:
         for obj, count in count_dict.items():
             st.write(f"{obj}: {count}")
 
-
+# ---------------- WEBCAM DETECTION ---------------- #
 
 st.divider()
 st.subheader("Live Webcam Detection")

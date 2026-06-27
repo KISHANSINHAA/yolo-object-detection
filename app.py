@@ -1,10 +1,17 @@
+import os
+os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "0"  # Fix: prevent libGL dependency at import time
+
 import streamlit as st
-from ultralytics import YOLO
 import numpy as np
 from PIL import Image
 import pandas as pd
 import av
-from streamlit_webrtc import webrtc_streamer, WebRtcMode  # Fix 1: import WebRtcMode
+
+# Fix: import cv2 via headless path before ultralytics loads it
+import cv2  # noqa: must come before ultralytics
+
+from ultralytics import YOLO
+from streamlit_webrtc import webrtc_streamer, WebRtcMode
 
 st.set_page_config(page_title="Object Detection App", layout="wide")
 st.title("Real-Time Computer Vision Object Detection System")
@@ -29,11 +36,11 @@ if uploaded_file is not None:
 
     with col1:
         st.subheader("Original Image")
-        st.image(image, use_container_width=True)  # Fix 2: use_container_width instead of width="stretch"
+        st.image(image, use_container_width=True)
 
     with col2:
         st.subheader("Detection Result")
-        st.image(output, use_container_width=True)  # Fix 2: same here
+        st.image(output, use_container_width=True)
 
     boxes = result.boxes
     if boxes is not None:
@@ -59,7 +66,7 @@ if uploaded_file is not None:
         for obj, count in count_dict.items():
             st.write(f"{obj}: {count}")
 
-# ---------------- WEBCAM DETECTION ---------------- #
+
 
 st.divider()
 st.subheader("Live Webcam Detection")
